@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Декодирование шифра 2СС</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Декодирование шифра 2СС</h1>
+    <textarea id="input" placeholder="Введите шифр 2СС"></textarea>
+    <button onclick="decode()">Декодировать</button>
+    <h2>Результат:</h2>
+    <pre id="output"></pre>
+
+    <script>
+        function decode() {
+            const input = document.getElementById('input').value.trim();
+            let output = '';
+
+            try {
+                // Шаг 1: Отделяем первую цифру
+                const firstDigit = input[0];
+                let remaining = input.slice(1);
+
+                // Шаг 2: Разбиваем на гамма-блоки
+                const gammaBlocks = [];
+                let i = 0;
+                while (i < remaining.length) {
+                    if (remaining[i] === '1') {
+                        gammaBlocks.push('1');
+                        i++;
+                    } else {
+                        let count = 0;
+                        while (remaining[i] === '0') {
+                            count++;
+                            i++;
+                        }
+                        if (remaining[i] === '1') {
+                            gammaBlocks.push('0'.repeat(count) + '1');
+                            i++;
+                        }
+                    }
+                }
+
+                // Шаг 3: Убираем нули в начале каждого гамма-блока
+                const cleanedBlocks = gammaBlocks.map(block => {
+                    return block.slice(block.indexOf('1'));
+                });
+
+                // Шаг 4: Переводим в 10СС
+                const decimalValues = cleanedBlocks.map(block => parseInt(block, 2));
+
+                // Шаг 5: Восстанавливаем серии
+                const series = decimalValues.map(value => {
+                    return firstDigit === '1' ? '1'.repeat(value) : '0'.repeat(value);
+                });
+
+                // Шаг 6: Сжимаем результат
+                const compressed = series.join('');
+
+                // Шаг 7: Разделяем на блоки по 8 символов
+                const chunks = [];
+                for (let i = 0; i < compressed.length; i += 8) {
+                    let chunk = compressed.slice(i, i + 8);
+                    if (chunk.length < 8) {
+                        chunk = chunk.padEnd(8, '0'); // Дополняем нулями, если нужно
+                    }
+                    chunks.push(chunk);
+                }
+
+                // Шаг 8: Переводим каждый блок в 16СС и ASCII
+                const hexValues = chunks.map(chunk => {
+                    return parseInt(chunk, 2).toString(16).padStart(2, '0');
+                });
+
+                const asciiChars = hexValues.map(hex => {
+                    const charCode = parseInt(hex, 16);
+                    return charCode >= 32 && charCode <= 126 ? String.fromCharCode(charCode) : '.';
+                });
+
+                output = asciiChars.join('');
+            } catch (e) {
+                output = 'Ошибка декодирования: ' + e.message;
+            }
+
+            document.getElementById('output').textContent = output;
+        }
+    </script>
+</body>
+</html>

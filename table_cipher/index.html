@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Table Cipher</title>
+  <link rel="stylesheet" href="css/index.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script src="js/index.js" defer></script>
+</head>
+<body>
+  <a href="/menu/index.html" class="back-button">&lt;back</a>
+  <div class="container">
+    <h1>Табличный шифр</h1>
+    <div class="encrypt-section">
+      <h2>Шифрование</h2>
+      <input type="text" placeholder="Введите ключ" id="encryptKey">
+      <input type="text" placeholder="Введите текст для шифрования" id="encryptText">
+      <input type="text" placeholder="Зашифрованный текст появится здесь" id="encryptResult" readonly>
+    </div>
+    
+    <div class="decrypt-section">
+      <h2>Расшифрование</h2>
+      <div class="decrypt-mode-switch">
+        <button class="active" id="withKeyMode">С ключом</button>
+        <button id="bruteForceMode">Без ключа (подбор)</button>
+      </div>
+      <div id="keyInputSection">
+        <input type="text" placeholder="Введите ключ" id="decryptKey">
+      </div>
+      <input type="text" placeholder="Введите текст для расшифрования" id="decryptText">
+      <input type="text" placeholder="Расшифрованный текст появится здесь" id="decryptResult" readonly>
+      <div id="bruteForceResults" class="hidden">
+        <h3>Возможные варианты:</h3>
+        <div id="bruteForceList"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
